@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prédiction de la Potabilité de l'Eau</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #74ebd5, #acb6e5);
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            max-width: 600px;
+            margin-top: 50px;
+            padding: 40px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            color: #007bff;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 18px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+            border-radius: 10px;
+        }
+
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: none;
+        }
+
+        .form-group small {
+            color: #6c757d;
+        }
+
+        .tooltip-inner {
+            max-width: 200px;
+            font-size: 12px;
+            background-color: #17a2b8;
+            color: white;
+            padding: 5px;
+        }
+    </style>
+
+    <script>
+        function validateForm() {
+            const ph = document.getElementById("ph").value;
+            const hardness = document.getElementById("hardness").value;
+            const solids = document.getElementById("solids").value;
+            const chloramines = document.getElementById("chloramines").value;
+            const sulfate = document.getElementById("sulfate").value;
+            const conductivity = document.getElementById("conductivity").value;
+            const organic_carbon = document.getElementById("organic_carbon").value;
+            const trihalomethanes = document.getElementById("trihalomethanes").value;
+            const turbidity = document.getElementById("turbidity").value;
+
+            if (ph < 0 || ph > 14) {
+                alert("Le pH doit être compris entre 0 et 14.");
+                return false;
+            }
+            const values = [hardness, solids, chloramines, sulfate, conductivity, organic_carbon, trihalomethanes, turbidity];
+            for (let value of values) {
+                if (value < 0) {
+                    alert("Toutes les valeurs doivent être positives.");
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Prédiction de la Potabilité de l'Eau</h2>
+        <form action="/predict" method="POST" class="mt-4" onsubmit="return validateForm()">
+            <div class="form-group">
+                <label for="ph">pH <small>(entre 0 et 14)</small> :</label>
+                <input type="number" class="form-control" id="ph" name="ph" min="0" max="14" placeholder="Entrez la valeur du pH" required>
+            </div>
+            <div class="form-group">
+                <label for="hardness">Dureté (Hardness) :</label>
+                <input type="number" class="form-control" id="hardness" name="hardness" min="0" placeholder="Entrez la valeur de la dureté" required>
+            </div>
+            <div class="form-group">
+                <label for="solids">Solides :</label>
+                <input type="number" class="form-control" id="solids" name="solids" min="0" placeholder="Entrez la valeur des solides" required>
+            </div>
+            <div class="form-group">
+                <label for="chloramines">Chloramines :</label>
+                <input type="number" class="form-control" id="chloramines" name="chloramines" min="0" placeholder="Entrez la valeur des chloramines" required>
+            </div>
+            <div class="form-group">
+                <label for="sulfate">Sulfates :</label>
+                <input type="number" class="form-control" id="sulfate" name="sulfate" min="0" placeholder="Entrez la valeur des sulfates" required>
+            </div>
+            <div class="form-group">
+                <label for="conductivity">Conductivité :</label>
+                <input type="number" class="form-control" id="conductivity" name="conductivity" min="0" placeholder="Entrez la valeur de la conductivité" required>
+            </div>
+            <div class="form-group">
+                <label for="organic_carbon">Carbone Organique :</label>
+                <input type="number" class="form-control" id="organic_carbon" name="organic_carbon" min="0" placeholder="Entrez la valeur du carbone organique" required>
+            </div>
+            <div class="form-group">
+                <label for="trihalomethanes">Trihalométhanes :</label>
+                <input type="number" class="form-control" id="trihalomethanes" name="trihalomethanes" min="0" placeholder="Entrez la valeur des trihalométhanes" required>
+            </div>
+            <div class="form-group">
+                <label for="turbidity">Turbidité :</label>
+                <input type="number" class="form-control" id="turbidity" name="turbidity" min="0" placeholder="Entrez la valeur de la turbidité" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Prédire</button>
+        </form>
+
+        {% if prediction_text %}
+        <div class="mt-4 alert alert-info">
+            <strong>Résultat :</strong> {{ prediction_text }}
+        </div>
+        {% endif %}
+    </div>
+</body>
+
+</html>
